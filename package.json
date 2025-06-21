@@ -3,11 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@react-leaflet/core": "^3.0.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "leaflet": "^1.9.4",
+    "leaflet-routing-machine": "^3.2.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-leaflet": "^5.0.0",
@@ -40,8 +44,9 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.19", 
-    "postcss": "^8.4.38",     
-    "tailwindcss": "^3.4.4"    
+    "autoprefixer": "^10.4.19",
+    "nodemon": "^3.1.10",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4"
   }
 }
