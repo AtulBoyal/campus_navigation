@@ -1,69 +1,93 @@
+// Main App component for the navigation UI
 import React, { useState } from 'react';
 
-// Main App component for the navigation UI
-const FromToCard = () => {
+const FromToCard = ({ mapData, setRoutePath }) => {
   // State variables to hold the values of the 'From' and 'To' input fields
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Handler for the 'Show Directions' button click
   const handleShowDirections = () => {
-    // In a real application, you would integrate with a mapping API here
-    // to fetch and display directions based on fromLocation and toLocation.
-    console.log('Fetching directions from:', fromLocation, 'to:', toLocation);
-    // You could also add validation or loading states here.
+    if (!fromLocation || !toLocation) {
+      console.log('Please select both start and end locations');
+      return;
+    }
 
-    // For demonstration, we'll just show an alert (in a real app, use a modal)
-    // Removed alert as per instructions, will just log to console.
-    // In a production app, you'd show directions on a map or a new screen.
-    alert(`Showing directions from "${fromLocation}" to "${toLocation}". (This would connect to a map service!)`);
+    if (fromLocation === toLocation) {
+      setError('Please select different locations');
+      return;
+    }
+
+    setError(null);
+    setLoading(true);
+
+    // Set route path for Leaflet Routing Machine
+    setRoutePath([fromLocation, toLocation]);
+    
+    setLoading(false);
   };
 
   return (
-    // Main container for the application, centered on the screen with a yellow-orange gradient background
-
     <div className="justify-center bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-200 bg-gradient-to-r from-yellow-300 to-orange-500">
-    <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
         IITH MAPS
-    </h1>
+      </h1>
 
-    {/* 'From' location input group */}
-    <div className="mb-4">
+      {error && (
+        <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md text-center">
+          {error}
+        </div>
+      )}
+
+      <div className="mb-4">
         <label htmlFor="from" className="block text-gray-700 text-sm font-semibold mb-2">
-        From:
+          From:
         </label>
-        <input
-        type="text"
-        id="from"
-        className="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-        placeholder="Your current location or starting point"
-        value={fromLocation}
-        onChange={(e) => setFromLocation(e.target.value)}
-        />
-    </div>
+        <select
+          id="from"
+          className="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+          value={fromLocation}
+          onChange={(e) => setFromLocation(e.target.value)}
+        >
+          <option value="">Select starting point</option>
+          {mapData?.nodes.map((node) => (
+            <option key={node.id} value={node.id}>
+              {node.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-    {/* 'To' location input group */}
-    <div className="mb-6">
+      <div className="mb-6">
         <label htmlFor="to" className="block text-gray-700 text-sm font-semibold mb-2">
-        To:
+          To:
         </label>
-        <input
-        type="text"
-        id="to"
-        className="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-        placeholder="Your destination"
-        value={toLocation}
-        onChange={(e) => setToLocation(e.target.value)}
-        />
-    </div>
+        <select
+          id="to"
+          className="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+          value={toLocation}
+          onChange={(e) => setToLocation(e.target.value)}
+        >
+          <option value="">Select destination</option>
+          {mapData?.nodes.map((node) => (
+            <option key={node.id} value={node.id}>
+              {node.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-    {/* Show Directions button */}
-    <button
+      <button
         onClick={handleShowDirections}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 transform hover:scale-105"
-    >
-        Show Directions
-    </button>
+        disabled={loading}
+        className={`w-full text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 transform ${
+          loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
+        }`}
+      >
+        {loading ? 'Calculating...' : 'Show Directions'}
+      </button>
     </div>
   );
 };
