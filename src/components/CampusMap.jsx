@@ -21,7 +21,7 @@ const CampusMap = () => {
 
   // Fetch backend map data (nodes, edges)
   useEffect(() => {
-    fetch(process.env.REACT_APP_BACKEND_URL)
+    fetch('http://localhost:5000/api/map')
     .then(res => res.json())
     .then(data => {
       console.log("Map data loaded:", data);

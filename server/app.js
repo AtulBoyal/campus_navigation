@@ -6,10 +6,7 @@ const path = require('path');
 const app = express();
 
 // Enable CORS for all routes
-app.use(cors({
-  origin: process.env.FRONTEND_URL, // This line uses the environment variable
-  credentials: true // Set to true if your frontend needs to send cookies/credentials
-}));
+app.use(cors());
 app.use(express.json());
 
 // Endpoint to get map data
@@ -27,5 +24,5 @@ app.get('/api/map', (req, res) => {
 
 // Placeholder for other endpoints (routes, search, etc.)
 
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
