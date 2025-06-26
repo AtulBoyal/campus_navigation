@@ -1,32 +1,44 @@
-Campus Navigation App for IIT Hyderabad
+# 🗺️ Campus Navigation App for IIT Hyderabad
 
-This is a campus navigation web app built by "AKSHAT BANZAL and ATUL BOYAL" for IITH (IIT Hyderabad). 
-It lets you pick any two places on campus and shows you the best route and directions on a map. It uses OpenStreetMap data, React, and Leaflet Routing Machine for real-world navigation.
+A smart, interactive web app to help you navigate the IIT Hyderabad campus with ease.
 
+Built by **Atul Boyal** and **Akshat Banzal**, this application allows users to select any two locations within the IITH campus and view the best walking/driving route between them using an interactive map powered by **OpenStreetMap** and **Leaflet Routing Machine**.
 
-Features:-
-• Search for routes between any two locations on the IITH campus
-• See the path and step-by-step directions on an interactive map
-• Only shows the locations you actually care about (no clutter)
-• Super fast—no need to refresh the page for new routes
-• Easy to add new places (just edit a JSON file)
-• Modern UI (React + Tailwind + Leaflet)
+---
 
+## 🚀 Features
 
-🛠️ How to Run This Project
-1. Clone the repo:       git clone https://github.com/AtulBoyal/campus_navigation.git
-                         cd campus_navigation
-2. Install dependencies: npm install
-4. Start the frontend:   npm start
-3. Start the backend:    node server/app.js
+- 🔍 Search for routes between any two campus locations  
+- 🗺️ Interactive map with real-time, step-by-step navigation  
+- 🎯 Only shows relevant campus landmarks—no clutter  
+- ⚡ Super fast—no page reloads for new routes  
+- ✏️ Easily add new locations via a simple JSON file  
+- 💻 Built with **React**, **Tailwind CSS**, and **Leaflet**
 
-• The app runs at http://localhost:3000
-• The backend runs at http://localhost:5000
+---
 
+## 🛠️ How to Run This Project
 
-💡 How Does Routing Work?
-    • Uses Leaflet Routing Machine with OpenStreetMap data—so the route follows real campus roads and paths.
-    • Only one route and set of directions is ever shown (no leftovers from previous searches).
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/AtulBoyal/campus_navigation.git
+   cd campus_navigation
+2. **Install dependencies: npm install**
+Start the frontend:
+    ```bash
+    npm start
+3. **Start the backend:**
+    ```bash
+    node server/app.js
+    
+- The app runs at http://localhost:3000 
+- The backend runs at http://localhost:5000
 
+The website is deployed at: **https://campus-navigation-henna.vercel.app/**
 
-Made with ❤️ for IITH campus navigation.
+## 💡 How Does Routing Work? 
+
+- Uses Leaflet Routing Machine with OpenStreetMap data—so the route follows real campus roads and paths. 
+- Only one route and set of directions is ever shown (no leftovers from previous searches).
+
+Made with ❤️ by Atul & Akshat for the IITH community.
