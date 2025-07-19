@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.leaflet-popup {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.leaflet-popup-open .leaflet-popup {
+  opacity: 1;
+  transform: scale(1);
+}

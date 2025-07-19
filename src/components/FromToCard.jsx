@@ -1,7 +1,7 @@
 // Main App component for the navigation UI
 import React, { useState } from 'react';
 
-const FromToCard = ({ mapData, setRoutePath }) => {
+const FromToCard = ({ mapData, setRoutePath, userLocation }) => {
   // State variables to hold the values of the 'From' and 'To' input fields
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
@@ -20,6 +20,11 @@ const FromToCard = ({ mapData, setRoutePath }) => {
       return;
     }
 
+    if (fromLocation === 'my-location' && !userLocation) {
+      alert("Please tap 'Use My Location' first to detect your position.");
+      return;
+    }
+
     setError(null);
     setLoading(true);
 
@@ -30,7 +35,12 @@ const FromToCard = ({ mapData, setRoutePath }) => {
   };
 
   return (
-    <div className="justify-center bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-200 bg-gradient-to-r from-yellow-300 to-orange-500">
+    <div className="max-w-full sm:max-w-md w-[90vw]
+      px-4 py-6 sm:p-8
+      rounded-2xl shadow-xl border border-gray-200
+      bg-gradient-to-r from-yellow-300 to-orange-500
+      mx-auto
+    ">
       <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
         IITH MAPS
       </h1>
@@ -46,12 +56,17 @@ const FromToCard = ({ mapData, setRoutePath }) => {
           From:
         </label>
         <select
+          aria-label="Select starting location"
           id="from"
           className="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
           value={fromLocation}
           onChange={(e) => setFromLocation(e.target.value)}
         >
           <option value="">Select starting point</option>
+          {userLocation && <option value="my-location">My Location</option>}
+          {mapData?.nodes.map((node) => (
+            <option key={node.id} value={node.id}>{node.name}</option>
+          ))}
           {mapData?.nodes.map((node) => (
             <option key={node.id} value={node.id}>
               {node.name}
@@ -80,6 +95,7 @@ const FromToCard = ({ mapData, setRoutePath }) => {
       </div>
 
       <button
+        aria-label="Show Directions"
         onClick={handleShowDirections}
         disabled={loading}
         className={`w-full text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 transform ${
