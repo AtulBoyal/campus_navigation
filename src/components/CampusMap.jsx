@@ -3,9 +3,10 @@ import { MapContainer, TileLayer, GeoJSON , Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet'; 
 import { toast } from "react-toastify";
-
+import { CAMPUS_CONFIG } from '../config/campusConfig';
 import FromToCard from './FromToCard';
 import Routing from './Routing';
+import RouteInfoCard from './RouteInfoCard';
 
 // Fix for default marker icon in Leaflet with React (important for Point GeoJSON)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -15,31 +16,39 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
+const buildingStyle = {
+  fillColor: '#1f2937',
+  color: '#111827',
+  weight: 1,
+  opacity: 0.8,
+  fillOpacity: 0.4
+};
+
+const pathStyle = {
+  color: '#6b7280',
+  weight: 3,
+  opacity: 0.7
+};
+
+const isInsideIITH = (coords) => {
+  const [lat, lng] = coords;
+
+  return (
+    lat >= CAMPUS_CONFIG.bounds.minLat &&
+    lat <= CAMPUS_CONFIG.bounds.maxLat &&
+    lng >= CAMPUS_CONFIG.bounds.minLng &&
+    lng <= CAMPUS_CONFIG.bounds.maxLng
+  );
+};
+
 const CampusMap = () => {
   const [buildingsData, setBuildingsData] = useState(null);
   const [pathsData, setPathsData] = useState(null);
   const [mapData, setMapData] = useState(null);
   const [routePath, setRoutePath] = useState([]);
+  const [routeInfo, setRouteInfo] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-
-  const isInsideIITH = (coords) => {
-    const [lat, lng] = coords;
-
-    // Define bounds around IITH campus [You can fine-tune these]
-    const IITH_BOUNDS = {
-      minLat: 17.581, 
-      maxLat: 17.604,
-      minLng: 78.118,
-      maxLng: 78.129
-    };
-
-    return (
-      lat >= IITH_BOUNDS.minLat &&
-      lat <= IITH_BOUNDS.maxLat &&
-      lng >= IITH_BOUNDS.minLng &&
-      lng <= IITH_BOUNDS.maxLng
-    );
-  };
+  const [loadingError, setLoadingError] = useState(false);
 
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -78,14 +87,26 @@ const CampusMap = () => {
     );
   };
 
-  // Fetch backend map data (nodes, edges)
   useEffect(() => {
-    fetch(process.env.REACT_APP_BACKEND_URL)
-    .then(res => res.json())
-    .then(data => {
-      console.log("Map data loaded:", data);
-      setMapData(data);
-    });
+    const fetchMapData = async () => {
+      try {
+        const response = await fetch(process.env.REACT_APP_BACKEND_URL || "http://localhost:5000/api/map")
+        
+        if (!response.ok){
+          throw new Error("Failed to load map data");
+        }
+        
+        const data = await response.json();
+        setMapData(data);
+      }
+      catch(error){
+        console.error(error);
+        setLoadingError(true);
+        toast.error("Unable to load campus data");
+      }
+    };
+
+    fetchMapData();
   }, []);
 
   
@@ -107,6 +128,8 @@ const CampusMap = () => {
         // setPoisData(poisJson);
       } catch (error) {
         console.error("Error fetching GeoJSON data:", error);
+        setLoadingError(true);
+        toast.error("Unable to load campus map layers");
       }
     };
     
@@ -114,33 +137,36 @@ const CampusMap = () => {
   }, []); // The empty array ensures this effect runs only once after the initial render
   
   
-  // Find a central coordinate for your campus from your data or estimate
-  const campusCenter = [17.59741, 78.12283]; 
-  const defaultZoom = 17; // Adjust zoom level to fit your campus
-  
   const onEachFeature = (feature, layer) => {
     if (feature.properties?.name) {
       layer.bindPopup(feature.properties.name);
     }
   };
   
-  const buildingStyle = {
-    fillColor: 'black',
-    color: 'black',
-    weight: 1,
-    opacity: 0.8,
-    fillOpacity: 0.4
-  };
-  
-  const pathStyle = {
-    color: 'gray',
-    weight: 3,
-    opacity: 0.7
-  };
-
+  if (loadingError) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-red-600">
+            Failed to load campus data
+          </h2>
+          <p className="text-gray-600 mt-2">
+            Please try again later.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!mapData || !buildingsData || !pathsData ) {
-    return <div>Loading map...</div>; 
+    return (
+      <div className="h-screen flex flex-col items-center justify-center gap-3">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-gray-600 font-medium">
+          Loading Campus Map...
+        </p>
+      </div>
+    );
   }
   
   return (
@@ -157,10 +183,14 @@ const CampusMap = () => {
         <FromToCard mapData={mapData} setRoutePath={setRoutePath} userLocation={userLocation} />
       </div>
 
+      <RouteInfoCard
+        routeInfo={routeInfo}
+      />
+
       {/* Fullscreen Map */}
       <MapContainer
-        center={campusCenter}
-        zoom={defaultZoom}
+        center={CAMPUS_CONFIG.center}
+        zoom={CAMPUS_CONFIG.defaultZoom}
         scrollWheelZoom={true}
         style={{ height: '100vh', width: '100vw' }}
         >
@@ -175,7 +205,21 @@ const CampusMap = () => {
             key={node.id}
             position={[node.coords[0], node.coords[1]]}
           >
-            <Popup>{node.name}</Popup>
+            <Popup>
+              <div className="min-w-[180px]">
+                <h3 className="font-bold text-lg">
+                  {node.icon} {node.name}
+                </h3>
+
+                <p className="text-sm text-gray-600">
+                  {node.category}
+                </p>
+
+                <p className="text-xs mt-1">
+                  {node.description}
+                </p>
+              </div>
+            </Popup>
           </Marker>
         ))}
 
@@ -194,20 +238,33 @@ const CampusMap = () => {
         />
 
 
-        {routePath.length > 1 && (
-          <Routing
-            start={
-                routePath[0] === 'my-location'
+        {routePath.length > 1 &&
+          (
+            routePath[0] !== "my-location" ||
+            userLocation
+          ) && (
+            <Routing
+              start={
+                routePath[0] === "my-location"
                   ? userLocation
-                  : mapData.nodes.find(n => n.id === routePath[0]).coords
+                  : mapData.nodes.find(
+                      (n) => n.id === routePath[0]
+                    ).coords
               }
-            end={mapData.nodes.find(n => n.id === routePath[routePath.length-1]).coords}
-          />
+              end={
+                mapData.nodes.find(
+                  (n) => n.id === routePath[routePath.length - 1]
+                ).coords
+              }
+              setRouteInfo={setRouteInfo}
+            />
         )}
 
         {userLocation && (
           <Marker position={userLocation}>
-            <Popup>You are here</Popup>
+            <Popup>
+              📍 Your Current Location
+            </Popup>
           </Marker>
         )}
       </MapContainer>

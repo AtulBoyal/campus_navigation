@@ -7,7 +7,7 @@ const app = express();
 
 // Enable CORS for all routes
 app.use(cors({
-  origin: process.env.FRONTEND_URL, // This line uses the environment variable
+  origin: "http://localhost:3000", // This line uses the environment variable
   credentials: true // Set to true if your frontend needs to send cookies/credentials
 }));
 
