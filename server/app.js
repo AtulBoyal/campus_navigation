@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+
+const mapRoutes = require("./routes/mapRoutes");
 
 const app = express();
 
@@ -10,22 +10,13 @@ app.use(cors({
   origin: process.env.FRONTEND_URL, // This line uses the environment variable
   credentials: true // Set to true if your frontend needs to send cookies/credentials
 }));
+
 app.use(express.json());
 
-// Endpoint to get map data
-app.get('/api/map', (req, res) => {
-  const mapPath = path.join(__dirname, 'data', 'campusMap.json');
-  fs.readFile(mapPath, 'utf-8', (err, data) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Failed to load map data' });
-      return;
-    }
-    res.json(JSON.parse(data));
-  });
+app.use("/api/map", mapRoutes);
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`)
 });
-
-// Placeholder for other endpoints (routes, search, etc.)
-
-const PORT = 5000;
-app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
