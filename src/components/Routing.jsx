@@ -4,8 +4,9 @@ import L from "leaflet";
 
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+import "./Routing.css";
 
-const Routing = ({ start, end, }) => {
+const Routing = ({ start, end, setRouteInfo, }) => {
   const map = useMap();
   const routingControlRef = useRef(null);
 
@@ -22,16 +23,26 @@ const Routing = ({ start, end, }) => {
         L.latLng(start[0], start[1]),
         L.latLng(end[0], end[1]),
       ],
+      
       routeWhileDragging: false,
       addWaypoints: false,
       draggableWaypoints: false,
       showAlternatives: false,
       fitSelectedRoutes: true,
+      
+      show: false,
+      collapsible: true,
+      
       lineOptions: { styles: [{ color: "#2563eb", weight: 6 }] }, // same color as cleanup
     }).addTo(map);
 
     routingControl.on("routesfound", (e) => {
       const route = e.routes[0];
+
+      setRouteInfo({
+        distance: route.summary.totalDistance,
+        time: route.summary.totalTime,
+      });
 
       map.flyToBounds(
         L.latLngBounds(route.coordinates),
@@ -42,19 +53,17 @@ const Routing = ({ start, end, }) => {
     routingControlRef.current = routingControl;
 
     return () => {
-      return () => {
-        try {
-          if (routingControlRef.current) {
-            routingControlRef.current.getPlan().setWaypoints([]);
-            map.removeControl(routingControlRef.current);
-            routingControlRef.current = null;
-          }
-        } catch (err) {
-          console.warn("Routing cleanup:", err);
+      try {
+        if (routingControlRef.current) {
+          routingControlRef.current.getPlan().setWaypoints([]);
+          map.removeControl(routingControlRef.current);
+          routingControlRef.current = null;
         }
-      };
+      } catch (err) {
+        console.warn("Routing cleanup:", err);
+      }
     };
-  }, [map, start, end]);
+  }, [map, start, end, setRouteInfo]);
 
   return null;
 };

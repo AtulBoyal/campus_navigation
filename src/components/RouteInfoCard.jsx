@@ -1,45 +1,44 @@
 const RouteInfoCard = ({ routeInfo }) => {
   if (!routeInfo) return null;
 
-  const distanceKm = (routeInfo.distance / 1000).toFixed(2);
+  const distanceKm = (
+    routeInfo.distance / 1000
+  ).toFixed(2);
 
   const walkingMinutes = Math.ceil(
-    routeInfo.duration / 60
+    routeInfo.time / 60
   );
 
   return (
     <div
       className="
-      absolute
-      bottom-5
-      right-5
-      z-[1000]
-      bg-white
-      rounded-xl
-      shadow-xl
-      p-4
-      min-w-[240px]
-      border
+        absolute
+        bottom-4
+        left-1/2
+        -translate-x-1/2
+
+        sm:left-auto
+        sm:translate-x-0
+        sm:right-5
+
+        z-[1000]
+        bg-white
+        rounded-2xl
+        shadow-xl
+        px-4
+        py-3
+        border
+        border-gray-200
       "
     >
-      <h3 className="font-bold text-lg mb-2">
-        Route Summary
-      </h3>
+      <div className="flex gap-4 items-center text-sm font-medium">
+        <span>
+          📏 {distanceKm} km
+        </span>
 
-      <div className="space-y-1 text-sm">
-        <p>
-          <strong>Distance:</strong>{" "}
-          {distanceKm} km
-        </p>
-
-        <p>
-          <strong>ETA:</strong>{" "}
-          {walkingMinutes} min
-        </p>
-
-        <p className="text-green-600 font-medium">
-          Route Found
-        </p>
+        <span>
+          🚶 {walkingMinutes} min
+        </span>
       </div>
     </div>
   );

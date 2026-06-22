@@ -30,67 +30,18 @@ const pathStyle = {
   opacity: 0.7
 };
 
-const isInsideIITH = (coords) => {
-  const [lat, lng] = coords;
-
-  return (
-    lat >= CAMPUS_CONFIG.bounds.minLat &&
-    lat <= CAMPUS_CONFIG.bounds.maxLat &&
-    lng >= CAMPUS_CONFIG.bounds.minLng &&
-    lng <= CAMPUS_CONFIG.bounds.maxLng
-  );
-};
-
 const CampusMap = () => {
   const [buildingsData, setBuildingsData] = useState(null);
   const [pathsData, setPathsData] = useState(null);
   const [mapData, setMapData] = useState(null);
   const [routePath, setRoutePath] = useState([]);
   const [routeInfo, setRouteInfo] = useState(null);
-  const [userLocation, setUserLocation] = useState(null);
   const [loadingError, setLoadingError] = useState(false);
-
-  useEffect(() => {
-    if (!navigator.geolocation) return;
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const coords = [position.coords.latitude, position.coords.longitude];
-        if (isInsideIITH(coords)) {
-          setUserLocation(coords);
-        }
-      },
-      (error) => {
-        console.warn("Auto-location detection failed", error);
-      }
-    );
-  }, []);
-
-  const handleLocateMe = () => {
-    if (!navigator.geolocation) {
-      toast.error('Geolocation not supported');
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const coords = [position.coords.latitude, position.coords.longitude];
-        if (!isInsideIITH(coords)) {
-          toast.error('You are currently outside IITH. This app is meant for navigating inside the campus.');
-          return;
-        }
-        setUserLocation(coords);
-        toast.success('Location detected successfully! You can now select "My Location" in the From dropdown.');
-      },
-      (error) => {
-        toast.error('Unable to detect location. Check your location access');
-      }
-    );
-  };
 
   useEffect(() => {
     const fetchMapData = async () => {
       try {
-        const response = await fetch(process.env.REACT_APP_BACKEND_URL || "http://localhost:5000/api/map")
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/map`)
         
         if (!response.ok){
           throw new Error("Failed to load map data");
@@ -114,8 +65,6 @@ const CampusMap = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // IMPORTANT: Use process.env.PUBLIC_URL to correctly reference files in the public folder.
-        // The browser will request these files directly from the web server.
         const buildingsRes = await fetch(`${process.env.PUBLIC_URL}/data/buildings.geojson`);
         const pathsRes = await fetch(`${process.env.PUBLIC_URL}/data/paths.geojson`);
         const [buildingsJson, pathsJson] = await Promise.all([
@@ -171,16 +120,9 @@ const CampusMap = () => {
   
   return (
     <div className="relative w-full h-screen">
-      {/* Overlay Card */}
-      <button
-        onClick={handleLocateMe}
-        className="absolute top-2 right-2 z-[1001] bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"
-      >
-        Use My Location
-      </button>
 
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] w-[95vw] sm:w-[500px]">
-        <FromToCard mapData={mapData} setRoutePath={setRoutePath} userLocation={userLocation} />
+        <FromToCard mapData={mapData} setRoutePath={setRoutePath} />
       </div>
 
       <RouteInfoCard
@@ -240,16 +182,11 @@ const CampusMap = () => {
 
         {routePath.length > 1 &&
           (
-            routePath[0] !== "my-location" ||
-            userLocation
-          ) && (
             <Routing
               start={
-                routePath[0] === "my-location"
-                  ? userLocation
-                  : mapData.nodes.find(
-                      (n) => n.id === routePath[0]
-                    ).coords
+                mapData.nodes.find(
+                  n => n.id === routePath[0]
+                ).coords
               }
               end={
                 mapData.nodes.find(
@@ -258,14 +195,6 @@ const CampusMap = () => {
               }
               setRouteInfo={setRouteInfo}
             />
-        )}
-
-        {userLocation && (
-          <Marker position={userLocation}>
-            <Popup>
-              📍 Your Current Location
-            </Popup>
-          </Marker>
         )}
       </MapContainer>
     </div>

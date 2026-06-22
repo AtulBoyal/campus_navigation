@@ -1,0 +1,11 @@
+.leaflet-routing-container {
+  display: none !important;
+}
+
+.leaflet-routing-alt {
+  display: none !important;
+}
+
+.leaflet-routing-geocoders {
+  display: none !important;
+}
