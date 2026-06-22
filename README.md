@@ -1,176 +1,206 @@
-# IITH Campus Navigator
+# 🗺️ IITH Maps – Smart Campus Navigation System
 
-🏆 **1st Place Winner – Lambda Hackathon 2025, IIT Hyderabad**
+A web-based navigation platform designed to help students, visitors, and staff navigate the IIT Hyderabad campus efficiently.
 
-An interactive campus navigation platform built to help students, visitors, and freshmen navigate the IIT Hyderabad campus efficiently. The project was developed during Lambda Hackathon 2025 after observing a common problem faced by new students: many campus buildings lacked clear signboards, forcing students to repeatedly ask seniors for directions.
-
-The platform provides landmark search, route visualization, geolocation support, and interactive campus mapping to simplify navigation across the campus.
-
-## Live Demo
-
-🌐 https://iith-maps-campus-navigation.vercel.app/
-
-## GitHub Repository
-
-📂 https://github.com/AtulBoyal/campus_navigation
+Built during **Lambda Hackathon 2025** organized by the Web & App Development Club (WADC), IIT Hyderabad, where the project secured **🥇 1st Place Overall**.
 
 ---
 
-## Motivation
+## 🚀 Live Demo
 
-During our first days on campus, finding important locations such as the Library, Lecture Hall Complex, CSE Building, Hospital, and Hostel facilities was often difficult because:
+**Frontend:** https://iith-maps-campus-navigation.vercel.app/
 
-* Several buildings were not clearly labeled.
-* New students were unfamiliar with campus layout.
-* Directions often depended on asking nearby seniors.
-* Existing map solutions were not optimized for campus-specific navigation.
-
-To address this challenge, we built IITH Campus Navigator as a hackathon solution and secured 1st place at Lambda Hackathon 2025.
+**GitHub Repository:** https://github.com/AtulBoyal/campus_navigation
 
 ---
 
-## Features
+## 📖 Problem Statement
+
+Navigating a large university campus can be challenging, especially for freshmen and visitors.
+
+During our initial days at IIT Hyderabad, many buildings either lacked clear name boards or were difficult to locate. Finding destinations often required asking nearby seniors for directions.
+
+To solve this problem, we built **IITH Maps**, a lightweight campus navigation system that provides:
+
+* Interactive campus map visualization
+* Building information
+* Shortest route navigation
+* Searchable destination selection
+* Mobile-friendly navigation experience
+
+---
+
+## ✨ Features
 
 ### Navigation
 
-* Source and destination selection
-* Route visualization on interactive maps
-* Automatic route fitting and zooming
-* Route recalculation support
-* Current location detection
+* Interactive IIT Hyderabad campus map
+* Route generation between campus locations
+* Automatic route visualization
+* Distance estimation
+* Estimated walking time
 
-### Interactive Campus Map
+### Search
 
-* Landmark markers
-* Building information popups
-* GeoJSON-based building overlays
-* Campus pathway visualization
-* Searchable campus locations
+* Searchable source selection
+* Searchable destination selection
+* Swap source and destination locations
+* Input validation
+
+### Map Experience
+
+* Building markers with metadata
+* Building categories and descriptions
+* GeoJSON-based campus rendering
+* Route auto-focus and zoom
 
 ### User Experience
 
-* Loading states
-* Error handling
-* Toast notifications
-* Clean and intuitive interface
-
-### Backend Services
-
-* REST API using Express.js
-* Dynamic campus map data serving
-* Production-ready CORS configuration
-
-### Deployment
-
-* Frontend deployed on Vercel
-* Backend deployed on Render
+* Responsive design
+* Mobile-friendly route panel
+* Expandable/collapsible navigation panel
+* Clean modern interface
 
 ---
 
-## Tech Stack
+## 🏗️ Architecture
+
+Frontend (React + Leaflet)
+│
+▼
+Backend API (Express.js)
+│
+▼
+Campus Map Dataset (JSON)
+│
+▼
+Routing Engine (Leaflet Routing Machine + OSRM)
+
+---
+
+## 🛠️ Tech Stack
 
 ### Frontend
 
 * React.js
 * React Leaflet
-* Leaflet Routing Machine
-* OpenStreetMap
+* Leaflet
+* React Select
+* Tailwind CSS
 * React Toastify
 
 ### Backend
 
-* Express.js
 * Node.js
-* CORS
+* Express.js
+
+### Mapping
+
+* OpenStreetMap
+* Leaflet Routing Machine
+* GeoJSON
 
 ### Deployment
 
-* Vercel
-* Render
+* Vercel (Frontend)
+* Render (Backend)
 
 ---
 
-## Architecture
+## 📂 Project Structure
 
-```text
-User
-  │
-  ▼
-React Frontend (Vercel)
-  │
-  ▼
-Express REST API (Render)
-  │
-  ▼
-Campus Map Dataset (JSON + GeoJSON)
-```
-
----
-
-## Project Structure
-
-```text
+```bash
 campus_navigation/
-├── src/
-│   ├── components/
-│   ├── config/
-│   ├── data/
-│   └── App.jsx
 │
 ├── public/
 │   └── data/
+│       ├── buildings.geojson
+│       └── paths.geojson
 │
 ├── server/
 │   ├── routes/
 │   ├── data/
+│   │   └── campusMap.json
 │   └── app.js
+│
+├── src/
+│   ├── components/
+│   │   ├── CampusMap.jsx
+│   │   ├── FromToCard.jsx
+│   │   ├── Routing.jsx
+│   │   └── RouteInfoCard.jsx
+│   │
+│   └── config/
+│       └── campusConfig.js
 │
 └── README.md
 ```
 
 ---
 
-## Local Setup
+## ⚙️ Local Setup
 
-### Frontend
+### Clone Repository
+
+```bash
+git clone https://github.com/AtulBoyal/campus_navigation.git
+cd campus_navigation
+```
+
+### Install Dependencies
 
 ```bash
 npm install
-npm start
 ```
 
-### Backend
+### Frontend Environment Variables
+
+Create a `.env` file:
+
+```env
+REACT_APP_BACKEND_URL=http://localhost:5000
+```
+
+### Start Backend
 
 ```bash
 cd server
 npm install
-npm run dev
+node app.js
+```
+
+### Start Frontend
+
+```bash
+npm start
 ```
 
 ---
 
-## Future Improvements
+## 🌟 Future Improvements
 
-* Improved mobile responsiveness
-* Walking time estimation
-* Distance estimation display
-* Category-based filtering
-* Campus events integration
-* Accessibility improvements
-* Offline navigation support
-* Progressive Web App (PWA) support
+* Real-time GPS navigation inside campus
+* Indoor navigation support
+* Accessibility-aware routing
+* Multi-stop route planning
+* Department-wise building search
+* Dark mode support
+* Campus event integration
+* Emergency services routing
 
 ---
 
-## Contributors
+## 🏆 Achievement
+
+🥇 **1st Place – Lambda Hackathon 2025**
+
+Organized by the Web & App Development Club (WADC), IIT Hyderabad.
+
+---
+
+## 👥 Team
 
 * Atul Boyal
 * Akshat Banzal
 
----
-
-## Achievement
-
-🏆 Winner (1st Place) – Lambda Hackathon 2025, IIT Hyderabad
-
-Built as a practical solution to improve campus navigation and onboarding experience for new students and visitors.
+Built at IIT Hyderabad to make campus navigation easier for students and visitors.
